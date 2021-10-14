@@ -412,53 +412,27 @@ public class MeshFrame extends javax.swing.JFrame {
      * @param selectedNode nodeID that the message should be sent to
      */
     private void showSendDialog(long selectedNode) {
-//        // Get dialog layout
-//        LayoutInflater li = LayoutInflater.from(this);
-//        @SuppressLint("InflateParams")
-//        View sendDialogView = li.inflate(R.layout.send_dialog, null);
-//
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-//                this);
-//
-//        TextView nodeToSendTo = sendDialogView.findViewById(R.id.send_node_id);
-//        if (selectedNode == 0) {
-//            nodeToSendTo.setText("mesh_send_broadcast");
-//        } else {
-//            nodeToSendTo.setText(String.valueOf(selectedNode));
-//        }
-//
-//        final EditText msgToSend = sendDialogView.findViewById(R.id.send_node_msg);
-//        final long rcvNodeId = selectedNode;
-//        // set prompts.xml to alert dialog builder
-//        alertDialogBuilder.setView(sendDialogView)
-//                .setNegativeButton(getString(android.R.string.cancel),
-//                        (dialog, which) -> {
-//                            // Do something here if you want
-//                            dialog.dismiss();
-//                        })
-//                .setPositiveButton("mesh_send_button",
-//                        (dialog, which) -> {
-//                            MeshHandler.sendNodeMessage(rcvNodeId, msgToSend.getText().toString());
-//                            // Do something here if you want
-//                            dialog.dismiss();
-//                        });
-//        // create alert dialog
-//        final AlertDialog alertDialog = alertDialogBuilder.create();
-//
-//        // show it
-//        alertDialog.show();
-//
-//        // Set the button functions
-//        final JButton msg1Sel = sendDialogView.findViewById(R.id.bt_pred_msg_1);
-//        msg1Sel.setOnClickListener(v12 -> msgToSend.setText(predMsg1));
-//        final JButton msg2Sel = sendDialogView.findViewById(R.id.bt_pred_msg_2);
-//        msg2Sel.setOnClickListener(v12 -> msgToSend.setText(predMsg2));
-//        final JButton msg3Sel = sendDialogView.findViewById(R.id.bt_pred_msg_3);
-//        msg3Sel.setOnClickListener(v12 -> msgToSend.setText(predMsg3));
-//        final JButton msg4Sel = sendDialogView.findViewById(R.id.bt_pred_msg_4);
-//        msg4Sel.setOnClickListener(v12 -> msgToSend.setText(predMsg4));
-//        final JButton msg5Sel = sendDialogView.findViewById(R.id.bt_pred_msg_5);
-//        msg5Sel.setOnClickListener(v12 -> msgToSend.setText(predMsg5));
+        SendFrame sf = new SendFrame();
+
+        if (selectedNode == 0) {
+            sf.setTitle("Broadcast");
+        } else {
+            sf.setTitle("Send to: " + selectedNode);
+        }
+
+        final long rcvNodeId = selectedNode;
+        sf.btnSend.addActionListener(v -> {
+            MeshHandler.sendNodeMessage(rcvNodeId, sf.taMessage.getText());
+        });
+
+        // Set the button functions
+        sf.btnMsg1.addActionListener(v12 -> sf.taMessage.setText(predMsg1));
+        sf.btnMsg2.addActionListener(v12 -> sf.taMessage.setText(predMsg2));
+        sf.btnMsg3.addActionListener(v12 -> sf.taMessage.setText(predMsg3));
+        sf.btnMsg4.addActionListener(v12 -> sf.taMessage.setText(predMsg4));
+        sf.btnMsg5.addActionListener(v12 -> sf.taMessage.setText(predMsg5));
+        
+        sf.setVisible(true);
     }
 
     /**
@@ -721,6 +695,7 @@ public class MeshFrame extends javax.swing.JFrame {
 
                                 });
                             } else {
+                                tv_mesh_conn_status.setText("Not connected to right wifi");
 //                                List<WifiConfiguration> availAPs = wifiMgr.getConfiguredNetworks();
 //
 //                                for (int index = 0; index < availAPs.size(); index++) {
