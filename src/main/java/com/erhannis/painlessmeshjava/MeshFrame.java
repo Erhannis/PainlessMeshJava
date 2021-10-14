@@ -65,19 +65,6 @@ public class MeshFrame extends javax.swing.JFrame {
     private WifiManager wifiMgr;
 
     /**
-     * Mesh name == Mesh SSID
-     */
-    private String meshName;
-    /**
-     * Mesh password == Mesh network password
-     */
-    private String meshPw;
-    /**
-     * Mesh port == TCP port number
-     */
-    private static int meshPort;
-
-    /**
      * WiFi AP to which device was connected before connecting to mesh
      */
     private String oldAPName = "";
@@ -101,27 +88,6 @@ public class MeshFrame extends javax.swing.JFrame {
     private long filterId = 0;
 
     /**
-     * Predefined message 1
-     */
-    private String predMsg1;
-    /**
-     * Predefined message 2
-     */
-    private String predMsg2;
-    /**
-     * Predefined message 3
-     */
-    private String predMsg3;
-    /**
-     * Predefined message 4
-     */
-    private String predMsg4;
-    /**
-     * Predefined message 5
-     */
-    private String predMsg5;
-
-    /**
      * Flag if log file should be written
      */
     private static boolean doLogging = true;
@@ -141,17 +107,12 @@ public class MeshFrame extends javax.swing.JFrame {
     private final Options options;
 
     public void onResume() {
-        // Get previous mesh network credentials
-        meshName = (String) options.getOrDefault("pm_ssid", "prefs_name_hint");
-        meshPw = (String) options.getOrDefault("pm_pw", "prefs_pw_hint");
-        meshPort = (Integer) options.getOrDefault("pm_port", 5555);
-
-        // Get predefined messages
-        predMsg1 = (String) options.getOrDefault("msg_1", "");
-        predMsg2 = (String) options.getOrDefault("msg_2", "");
-        predMsg3 = (String) options.getOrDefault("msg_3", "");
-        predMsg4 = (String) options.getOrDefault("msg_4", "");
-        predMsg5 = (String) options.getOrDefault("msg_5", "");
+        // Poke predefined messages
+        options.getOrDefault("msg_1", "");
+        options.getOrDefault("msg_2", "");
+        options.getOrDefault("msg_3", "");
+        options.getOrDefault("msg_4", "");
+        options.getOrDefault("msg_5", "");
 
         // Get path to SDCard
         sdcardPath = System.getProperty("user.home") + "/.painlessMesh/";
@@ -177,7 +138,7 @@ public class MeshFrame extends javax.swing.JFrame {
         // Set onClickListener
         bt_to_set.addActionListener(v12 -> {
             if (MeshCommunicator.isConnected()) {
-                MeshHandler.sendNodeMessage(0, predMsg1);
+                MeshHandler.sendNodeMessage(0, (String) options.getOrDefault("msg_1", ""));
             }
         });
         // View for predefined message 2 button
@@ -185,7 +146,7 @@ public class MeshFrame extends javax.swing.JFrame {
         // Set onClickListener
         bt_to_set.addActionListener(v12 -> {
             if (MeshCommunicator.isConnected()) {
-                MeshHandler.sendNodeMessage(0, predMsg2);
+                MeshHandler.sendNodeMessage(0, (String) options.getOrDefault("msg_2", ""));
             }
         });
         // View for predefined message 2 button
@@ -193,7 +154,7 @@ public class MeshFrame extends javax.swing.JFrame {
         // Set onClickListener
         bt_to_set.addActionListener(v12 -> {
             if (MeshCommunicator.isConnected()) {
-                MeshHandler.sendNodeMessage(0, predMsg3);
+                MeshHandler.sendNodeMessage(0, (String) options.getOrDefault("msg_3", ""));
             }
         });
         // View for predefined message 2 button
@@ -201,7 +162,7 @@ public class MeshFrame extends javax.swing.JFrame {
         // Set onClickListener
         bt_to_set.addActionListener(v12 -> {
             if (MeshCommunicator.isConnected()) {
-                MeshHandler.sendNodeMessage(0, predMsg4);
+                MeshHandler.sendNodeMessage(0, (String) options.getOrDefault("msg_4", ""));
             }
         });
         // View for predefined message 2 button
@@ -209,7 +170,7 @@ public class MeshFrame extends javax.swing.JFrame {
         // Set onClickListener
         bt_to_set.addActionListener(v12 -> {
             if (MeshCommunicator.isConnected()) {
-                MeshHandler.sendNodeMessage(0, predMsg5);
+                MeshHandler.sendNodeMessage(0, (String) options.getOrDefault("msg_5", ""));
             }
         });
         // View for time sync request button
@@ -324,8 +285,8 @@ public class MeshFrame extends javax.swing.JFrame {
 
         // Add device AP to network list and enable it
         WifiConfiguration meshAPConfig = new WifiConfiguration();
-        meshAPConfig.SSID = "\"" + meshName + "\"";
-        meshAPConfig.preSharedKey = "\"" + meshPw + "\"";
+        meshAPConfig.SSID = "\"" + options.getOrDefault("pm_ssid", "prefs_name_hint") + "\"";
+        meshAPConfig.preSharedKey = "\"" + options.getOrDefault("pm_pw", "prefs_pw_hint") + "\"";
         int newId = wifiMgr.addNetwork(meshAPConfig);
         if (BuildConfig.DEBUG) {
             System.out.println(DBG_TAG + " Result of addNetwork: " + newId);
@@ -354,7 +315,7 @@ public class MeshFrame extends javax.swing.JFrame {
 //
 //        if (oldAPName.isEmpty()) {
 //            for (int index = 0; index < availAPs.size(); index++) {
-//                if (availAPs.get(index).SSID.equalsIgnoreCase("\"" + meshName + "\"")) {
+//                if (availAPs.get(index).SSID.equalsIgnoreCase("\"" + options.getOrDefault("pm_ssid", "prefs_name_hint") + "\"")) {
 //                    wifiMgr.disconnect();
 //                    wifiMgr.disableNetwork(availAPs.get(index).networkId);
 //                    if (BuildConfig.DEBUG) {
@@ -426,11 +387,11 @@ public class MeshFrame extends javax.swing.JFrame {
         });
 
         // Set the button functions
-        sf.btnMsg1.addActionListener(v12 -> sf.taMessage.setText(predMsg1));
-        sf.btnMsg2.addActionListener(v12 -> sf.taMessage.setText(predMsg2));
-        sf.btnMsg3.addActionListener(v12 -> sf.taMessage.setText(predMsg3));
-        sf.btnMsg4.addActionListener(v12 -> sf.taMessage.setText(predMsg4));
-        sf.btnMsg5.addActionListener(v12 -> sf.taMessage.setText(predMsg5));
+        sf.btnMsg1.addActionListener(v12 -> sf.taMessage.setText((String) options.getOrDefault("msg_1", "")));
+        sf.btnMsg2.addActionListener(v12 -> sf.taMessage.setText((String) options.getOrDefault("msg_2", "")));
+        sf.btnMsg3.addActionListener(v12 -> sf.taMessage.setText((String) options.getOrDefault("msg_3", "")));
+        sf.btnMsg4.addActionListener(v12 -> sf.taMessage.setText((String) options.getOrDefault("msg_4", "")));
+        sf.btnMsg5.addActionListener(v12 -> sf.taMessage.setText((String) options.getOrDefault("msg_5", "")));
         
         sf.setVisible(true);
     }
@@ -500,8 +461,10 @@ public class MeshFrame extends javax.swing.JFrame {
      * Scroll the text view with the received messages to the bottom
      */
     private void scrollViewDown() {
-        JScrollBar vertical = jScrollPane1.getVerticalScrollBar();
-        vertical.setValue( vertical.getMaximum() );
+        SwingUtilities.invokeLater(() -> {
+            JScrollBar vertical = jScrollPane1.getVerticalScrollBar();
+            vertical.setValue( vertical.getMaximum() );
+        });
     }
 
     /**
@@ -663,7 +626,7 @@ public class MeshFrame extends javax.swing.JFrame {
                             } catch (Throwable t) {
                                 t.printStackTrace();
                             }
-                            if (ssid.equalsIgnoreCase(meshName)) {
+                            if (ssid.equalsIgnoreCase((String) options.getOrDefault("pm_ssid", "prefs_name_hint"))) {
                                 System.out.println(DBG_TAG + " Connected to Mesh network wifiOn.getExtraInfo()");
                                 // Get the gateway IP address
                                 if (wifiMgr != null) {
@@ -682,7 +645,7 @@ public class MeshFrame extends javax.swing.JFrame {
                                 SwingUtilities.invokeLater(() -> {
                                     tryToConnect = false;
 
-                                    String connMsg = "ID: " + myNodeId + " on " + meshName;
+                                    String connMsg = "ID: " + myNodeId + " on " + options.getOrDefault("pm_ssid", "prefs_name_hint");
                                     tv_mesh_conn_status.setText(connMsg);
 
                                     // Set flag that we are connected
@@ -691,7 +654,7 @@ public class MeshFrame extends javax.swing.JFrame {
                                     startLogging();
 
                                     // Connected to the Mesh network, start network task now
-                                    MeshCommunicator.Connect(meshIP, meshPort);
+                                    MeshCommunicator.Connect(meshIP, (Integer) options.getOrDefault("pm_port", 5555));
 
                                 });
                             } else {
@@ -699,7 +662,7 @@ public class MeshFrame extends javax.swing.JFrame {
 //                                List<WifiConfiguration> availAPs = wifiMgr.getConfiguredNetworks();
 //
 //                                for (int index = 0; index < availAPs.size(); index++) {
-//                                    if (availAPs.get(index).SSID.equalsIgnoreCase("\"" + meshName + "\"")) {
+//                                    if (availAPs.get(index).SSID.equalsIgnoreCase("\"" + options.getOrDefault("pm_ssid", "prefs_name_hint") + "\"")) {
 //                                        wifiMgr.disconnect();
 //                                        wifiMgr.enableNetwork(availAPs.get(index).networkId, true);
 //                                        if (BuildConfig.DEBUG) {
@@ -816,7 +779,7 @@ public class MeshFrame extends javax.swing.JFrame {
                 }
                 if (!userDisConRequest) {
                     showToast("mesh_lost_connection");
-                    MeshCommunicator.Connect(meshIP, meshPort);
+                    MeshCommunicator.Connect(meshIP, (Integer) options.getOrDefault("pm_port", 5555));
                     tv_mesh_last_event.setText(msg);
                 }
             } else if (MeshCommunicator.MESH_CONNECTED.equals(intentAction)) {
